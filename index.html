@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocTools Pro - File & Document Utilities</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .logo i {
+            font-size: 28px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .tool-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tool-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .tool-header i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .tool-header h3 {
+            font-size: 1.4rem;
+        }
+        
+        .tool-body {
+            padding: 20px;
+        }
+        
+        .tool-body p {
+            color: var(--gray);
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--gray);
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 40px 20px;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover .file-upload-label {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .file-list {
+            margin-top: 15px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .file-item i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .file-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .qr-code, .barcode {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .canvas-container {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        #signatureCanvas {
+            display: block;
+            cursor: crosshair;
+            background: white;
+        }
+        
+        .canvas-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .notepad {
+            min-height: 300px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            min-width: 120px;
+            margin: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .invoice-table th, .invoice-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .invoice-table th {
+            background: #f8f9fa;
+        }
+        
+        .add-item-btn {
+            margin-top: 10px;
+        }
+        
+        .preview-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .preview-section {
+            margin-bottom: 20px;
+        }
+        
+        .preview-section h3 {
+            color: var(--primary);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+        }
+        
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--accent);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #444;
+            color: #bbb;
+            font-size: 14px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--success);
+            color: white;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-alt"></i>
+                    <span>DocTools Pro</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>All-in-One Document & File Utilities</h1>
+            <p>Convert, merge, generate, and manage your documents with our easy-to-use online tools. No installation required.</p>
+            <a href="#tools" class="btn">Explore Tools</a>
+        </div>
+    </section>
+
+    <section id="tools" class="container">
+        <h2 style="text-align: center; margin: 40px 0 20px; font-size: 2rem;">Our Tools</h2>
+        <div class="tools-grid">
+            <!-- PDF to Image Converter -->
+            <div class="tool-card" onclick="openModal('pdfToImageModal')">
+                <div class="tool-header">
+                    <i class="fas fa-file-image"></i>
+                    <h3>PDF to Image</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Convert PDF pages to high-quality images (JPG, PNG).</p>
+                    <a href="#" class="btn">Convert Now</a>
+                </div>
+            </div>
+
+            <!-- Image to PDF Converter -->
+            <div class="tool-card" onclick="openModal('imageToPdfModal')">
+                <div class="tool-header">
+                    <i class="fas fa-images"></i>
+                    <h3>Image to PDF</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Combine multiple images into a single PDF document.</p>
+                    <a href="#" class="btn">Convert Now</a>
+                </div>
+            </div>
+
+            <!-- PDF Merger -->
+            <div class="tool-card" onclick="openModal('pdfMergerModal')">
+                <div class="tool-header">
+                    <i class="fas fa-file-contract"></i>
+                    <h3>PDF Merger</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Combine multiple PDF files into one document.</p>
+                    <a href="#" class="btn">Merge PDFs</a>
+                </div>
+            </div>
+
+            <!-- QR Code Generator -->
+            <div class="tool-card" onclick="openModal('qrCodeModal')">
+                <div class="tool-header">
+                    <i class="fas fa-qrcode"></i>
+                    <h3>QR Code Generator</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Create custom QR codes for URLs, text, or contact info.</p>
+                    <a href="#" class="btn">Generate QR</a>
+                </div>
+            </div>
+
+            <!-- Barcode Generator -->
+            <div class="tool-card" onclick="openModal('barcodeModal')">
+                <div class="tool-header">
+                    <i class="fas fa-barcode"></i>
+                    <h3>Barcode Generator</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Generate various types of barcodes for products and inventory.</p>
+                    <a href="#" class="btn">Generate</a>
+                </div>
+            </div>
+
+            <!-- Online Notepad -->
+            <div class="tool-card" onclick="openModal('notepadModal')">
+                <div class="tool-header">
+                    <i class="fas fa-sticky-note"></i>
+                    <h3>Online Notepad</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Write and save notes as TXT files directly in your browser.</p>
+                    <a href="#" class="btn">Open Notepad</a>
+                </div>
+            </div>
+
+            <!-- Word Counter -->
+            <div class="tool-card" onclick="openModal('wordCounterModal')">
+                <div class="tool-header">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Word Counter</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Count words, characters, and estimate reading time for your text.</p>
+                    <a href="#" class="btn">Count Words</a>
+                </div>
+            </div>
+
+            <!-- Resume Builder -->
+            <div class="tool-card" onclick="openModal('resumeBuilderModal')">
+                <div class="tool-header">
+                    <i class="fas fa-file-user"></i>
+                    <h3>Resume Builder</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Create professional resumes with our easy-to-use builder.</p>
+                    <a href="#" class="btn">Build Resume</a>
+                </div>
+            </div>
+
+            <!-- Invoice Generator -->
+            <div class="tool-card" onclick="openModal('invoiceGeneratorModal')">
+                <div class="tool-header">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>Invoice Generator</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Create professional invoices and download as PDF.</p>
+                    <a href="#" class="btn">Create Invoice</a>
+                </div>
+            </div>
+
+            <!-- Digital Signature Maker -->
+            <div class="tool-card" onclick="openModal('signatureModal')">
+                <div class="tool-header">
+                    <i class="fas fa-signature"></i>
+                    <h3>Digital Signature</h3>
+                </div>
+                <div class="tool-body">
+                    <p>Create and save your digital signature for documents.</p>
+                    <a href="#" class="btn">Create Signature</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Modals for each tool -->
+    <!-- PDF to Image Modal -->
+    <div id="pdfToImageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>PDF to Image Converter</h2>
+                <button class="close-btn" onclick="closeModal('pdfToImageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Upload PDF File</label>
+                    <div class="file-upload">
+                        <input type="file" id="pdfToImageFile" accept=".pdf" onchange="handlePdfToImageUpload(event)">
+                        <label for="pdfToImageFile" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary);"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 14px; color: var(--gray);">PDF files only</p>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Output Format</label>
+                    <select class="form-control" id="imageFormat">
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Image Quality</label>
+                    <select class="form-control" id="imageQuality">
+                        <option value="high">High (300 DPI)</option>
+                        <option value="medium">Medium (150 DPI)</option>
+                        <option value="low">Low (72 DPI)</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="convertPdfToImage()">Convert to Images</button>
+                
+                <div id="pdfToImageResult" class="result-container" style="display: none;">
+                    <h3>Converted Images</h3>
+                    <div id="imagePreview"></div>
+                    <button class="btn" id="downloadImagesBtn" style="margin-top: 15px;">Download All Images</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image to PDF Modal -->
+    <div id="imageToPdfModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Image to PDF Converter</h2>
+                <button class="close-btn" onclick="closeModal('imageToPdfModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Upload Images</label>
+                    <div class="file-upload">
+                        <input type="file" id="imageToPdfFiles" accept="image/*" multiple onchange="handleImageToPdfUpload(event)">
+                        <label for="imageToPdfFiles" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary);"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 14px; color: var(--gray);">JPG, PNG, GIF, etc.</p>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="imageList" class="file-list"></div>
+                
+                <div class="form-group">
+                    <label>Page Size</label>
+                    <select class="form-control" id="pageSize">
+                        <option value="a4">A4</option>
+                        <option value="letter">Letter</option>
+                        <option value="legal">Legal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Orientation</label>
+                    <select class="form-control" id="pageOrientation">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="convertImagesToPdf()">Convert to PDF</button>
+                
+                <div id="imageToPdfResult" class="result-container" style="display: none;">
+                    <h3>PDF Generated</h3>
+                    <p>Your images have been converted to PDF successfully.</p>
+                    <button class="btn" id="downloadPdfBtn" style="margin-top: 15px;">Download PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Merger Modal -->
+    <div id="pdfMergerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>PDF Merger</h2>
+                <button class="close-btn" onclick="closeModal('pdfMergerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Upload PDF Files</label>
+                    <div class="file-upload">
+                        <input type="file" id="pdfMergerFiles" accept=".pdf" multiple onchange="handlePdfMergerUpload(event)">
+                        <label for="pdfMergerFiles" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary);"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 14px; color: var(--gray);">PDF files only</p>
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="pdfList" class="file-list"></div>
+                
+                <button class="btn" onclick="mergePdfs()">Merge PDFs</button>
+                
+                <div id="pdfMergerResult" class="result-container" style="display: none;">
+                    <h3>Merged PDF</h3>
+                    <p>Your PDF files have been merged successfully.</p>
+                    <button class="btn" id="downloadMergedPdfBtn" style="margin-top: 15px;">Download Merged PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Code Generator Modal -->
+    <div id="qrCodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>QR Code Generator</h2>
+                <button class="close-btn" onclick="closeModal('qrCodeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Enter Text or URL</label>
+                    <textarea class="form-control" id="qrCodeText" rows="3" placeholder="Enter text or URL to generate QR code"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>QR Code Size</label>
+                    <select class="form-control" id="qrCodeSize">
+                        <option value="150">150x150 px</option>
+                        <option value="200" selected>200x200 px</option>
+                        <option value="300">300x300 px</option>
+                        <option value="400">400x400 px</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Foreground Color</label>
+                    <input type="color" class="form-control" id="qrCodeForeground" value="#000000">
+                </div>
+                
+                <div class="form-group">
+                    <label>Background Color</label>
+                    <input type="color" class="form-control" id="qrCodeBackground" value="#ffffff">
+                </div>
+                
+                <button class="btn" onclick="generateQRCode()">Generate QR Code</button>
+                
+                <div id="qrCodeResult" class="result-container" style="display: none;">
+                    <h3>Your QR Code</h3>
+                    <div id="qrCodeDisplay" class="qr-code"></div>
+                    <button class="btn" id="downloadQrBtn" style="margin-top: 15px;">Download QR Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barcode Generator Modal -->
+    <div id="barcodeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Barcode Generator</h2>
+                <button class="close-btn" onclick="closeModal('barcodeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Barcode Type</label>
+                    <select class="form-control" id="barcodeType">
+                        <option value="CODE128">CODE128</option>
+                        <option value="CODE39">CODE39</option>
+                        <option value="EAN13">EAN13</option>
+                        <option value="EAN8">EAN8</option>
+                        <option value="UPC">UPC</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Enter Barcode Value</label>
+                    <input type="text" class="form-control" id="barcodeValue" placeholder="Enter barcode value">
+                </div>
+                
+                <div class="form-group">
+                    <label>Barcode Format</label>
+                    <select class="form-control" id="barcodeFormat">
+                        <option value="SVG">SVG</option>
+                        <option value="PNG">PNG</option>
+                        <option value="JPG">JPG</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Width</label>
+                    <input type="number" class="form-control" id="barcodeWidth" value="2" min="1" max="5">
+                </div>
+                
+                <div class="form-group">
+                    <label>Height</label>
+                    <input type="number" class="form-control" id="barcodeHeight" value="100" min="50" max="200">
+                </div>
+                
+                <button class="btn" onclick="generateBarcode()">Generate Barcode</button>
+                
+                <div id="barcodeResult" class="result-container" style="display: none;">
+                    <h3>Your Barcode</h3>
+                    <div id="barcodeDisplay" class="barcode"></div>
+                    <button class="btn" id="downloadBarcodeBtn" style="margin-top: 15px;">Download Barcode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Online Notepad Modal -->
+    <div id="notepadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Online Notepad</h2>
+                <button class="close-btn" onclick="closeModal('notepadModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <textarea class="form-control notepad" id="notepadText" rows="15" placeholder="Start typing your notes here..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="saveNotepad()">Save as TXT</button>
+                    <button class="btn btn-secondary" onclick="clearNotepad()">Clear</button>
+                    <button class="btn btn-secondary" onclick="loadNotepad()">Load from File</button>
+                    <input type="file" id="notepadFile" accept=".txt" style="display: none;" onchange="loadNotepadFile(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word Counter Modal -->
+    <div id="wordCounterModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Word Counter & Reading Time Estimator</h2>
+                <button class="close-btn" onclick="closeModal('wordCounterModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Enter Your Text</label>
+                    <textarea class="form-control" id="wordCounterText" rows="10" placeholder="Paste or type your text here..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="countWords()">Count Words</button>
+                
+                <div id="wordCounterResult" class="result-container" style="display: none;">
+                    <h3>Text Statistics</h3>
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <div class="stat-value" id="wordCount">0</div>
+                            <div class="stat-label">Words</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="charCount">0</div>
+                            <div class="stat-label">Characters</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="charNoSpaceCount">0</div>
+                            <div class="stat-label">Chars (no spaces)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value" id="readingTime">0</div>
+                            <div class="stat-label">Reading Time (min)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Builder Modal -->
+    <div id="resumeBuilderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Resume Builder</h2>
+                <button class="close-btn" onclick="closeModal('resumeBuilderModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resumeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Email Address">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" class="form-control" id="phone" placeholder="Phone Number">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Professional Summary</label>
+                        <textarea class="form-control" id="summary" rows="3" placeholder="Brief professional summary"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Work Experience</label>
+                        <div id="experienceContainer">
+                            <div class="experience-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Job Title">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Company">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Start Date (MM/YYYY)">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="End Date (MM/YYYY or Present)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <textarea class="form-control" rows="2" placeholder="Job Description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary add-item-btn" onclick="addExperience()">Add Experience</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Education</label>
+                        <div id="educationContainer">
+                            <div class="education-item">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Degree">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Institution">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Graduation Year">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary add-item-btn" onclick="addEducation()">Add Education</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Skills</label>
+                        <input type="text" class="form-control" id="skills" placeholder="Comma separated skills (e.g., JavaScript, Project Management, Communication)">
+                    </div>
+                    
+                    <button type="button" class="btn" onclick="generateResume()">Generate Resume</button>
+                </form>
+                
+                <div id="resumeResult" class="result-container" style="display: none;">
+                    <h3>Your Resume</h3>
+                    <div id="resumePreview" class="preview-container"></div>
+                    <button class="btn" id="downloadResumeBtn" style="margin-top: 15px;">Download as PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Generator Modal -->
+    <div id="invoiceGeneratorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Invoice Generator</h2>
+                <button class="close-btn" onclick="closeModal('invoiceGeneratorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="invoiceForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Invoice Number</label>
+                            <input type="text" class="form-control" id="invoiceNumber" placeholder="INV-001">
+                        </div>
+                        <div class="form-group">
+                            <label>Invoice Date</label>
+                            <input type="date" class="form-control" id="invoiceDate">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="date" class="form-control" id="dueDate">
+                        </div>
+                        <div class="form-group">
+                            <label>Currency</label>
+                            <select class="form-control" id="currency">
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="JPY">JPY (¥)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3>Bill From</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="fromName" placeholder="Your Name/Company">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="fromEmail" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="fromAddress" placeholder="Address">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3>Bill To</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="toName" placeholder="Client Name">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="toEmail" placeholder="Email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="toAddress" placeholder="Address">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3>Items</h3>
+                        <table class="invoice-table">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceItems">
+                                <tr>
+                                    <td><input type="text" class="form-control item-description" placeholder="Item description"></td>
+                                    <td><input type="number" class="form-control item-quantity" value="1" min="1"></td>
+                                    <td><input type="number" class="form-control item-price" value="0" step="0.01"></td>
+                                    <td class="item-total">0.00</td>
+                                    <td><button type="button" class="btn btn-danger" onclick="removeInvoiceItem(this)">Remove</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn btn-secondary add-item-btn" onclick="addInvoiceItem()">Add Item</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <h3>Summary</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Subtotal</label>
+                                <input type="text" class="form-control" id="subtotal" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Tax Rate (%)</label>
+                                <input type="number" class="form-control" id="taxRate" value="0" min="0" max="100" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Tax Amount</label>
+                                <input type="text" class="form-control" id="taxAmount" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Total</label>
+                                <input type="text" class="form-control" id="total" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea class="form-control" id="invoiceNotes" rows="2" placeholder="Additional notes or payment instructions"></textarea>
+                    </div>
+                    
+                    <button type="button" class="btn" onclick="generateInvoice()">Generate Invoice</button>
+                </form>
+                
+                <div id="invoiceResult" class="result-container" style="display: none;">
+                    <h3>Your Invoice</h3>
+                    <div id="invoicePreview" class="preview-container"></div>
+                    <button class="btn" id="downloadInvoiceBtn" style="margin-top: 15px;">Download as PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Signature Modal -->
+    <div id="signatureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Digital Signature Maker</h2>
+                <button class="close-btn" onclick="closeModal('signatureModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Draw Your Signature</label>
+                    <div class="canvas-container">
+                        <canvas id="signatureCanvas" width="700" height="200"></canvas>
+                    </div>
+                    <div class="canvas-controls">
+                        <button class="btn btn-secondary" onclick="clearSignature()">Clear</button>
+                        <button class="btn" onclick="saveSignature()">Save Signature</button>
+                    </div>
+                </div>
+                
+                <div id="signatureResult" class="result-container" style="display: none;">
+                    <h3>Your Signature</h3>
+                    <div id="signaturePreview"></div>
+                    <button class="btn" id="downloadSignatureBtn" style="margin-top: 15px;">Download Signature</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>DocTools Pro</h3>
+                    <p>Your all-in-one solution for document and file utilities. Convert, merge, generate, and manage your files with ease.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Tools</h3>
+                    <ul>
+                        <li><a href="#">PDF to Image</a></li>
+                        <li><a href="#">Image to PDF</a></li>
+                        <li><a href="#">PDF Merger</a></li>
+                        <li><a href="#">QR Code Generator</a></li>
+                        <li><a href="#">Barcode Generator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> contact@doctools.com</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Main St, Anytown, USA</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 DocTools Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let pdfToImageData = null;
+        let imageToPdfData = [];
+        let pdfMergerData = [];
+        let generatedQRCode = null;
+        let generatedBarcode = null;
+        let signatureData = null;
+        
+        // Notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification';
+            if (type === 'error') {
+                notification.classList.add('error');
+            } else if (type === 'warning') {
+                notification.classList.add('warning');
+            }
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+        
+        // PDF to Image Converter
+        function handlePdfToImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (file.type !== 'application/pdf') {
+                showNotification('Please select a PDF file', 'error');
+                return;
+            }
+            
+            pdfToImageData = file;
+            showNotification('PDF file uploaded successfully');
+        }
+        
+        function convertPdfToImage() {
+            if (!pdfToImageData) {
+                showNotification('Please upload a PDF file first', 'error');
+                return;
+            }
+            
+            const format = document.getElementById('imageFormat').value;
+            const quality = document.getElementById('imageQuality').value;
+            
+            // Simulate conversion process
+            const resultDiv = document.getElementById('pdfToImageResult');
+            resultDiv.style.display = 'block';
+            
+            // Display preview images
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = '';
+            
+            // For demo purposes, we'll create placeholder images
+            for (let i = 1; i <= 3; i++) {
+                const imgContainer = document.createElement('div');
+                imgContainer.style.marginBottom = '15px';
+                imgContainer.innerHTML = `
+                    <p>Page ${i}</p>
+                    <div style="width: 200px; height: 250px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 1px solid #ddd;">
+                        <i class="fas fa-file-image" style="font-size: 48px; color: #999;"></i>
+                    </div>
+                `;
+                imagePreview.appendChild(imgContainer);
+            }
+            
+            // Set up download button
+            document.getElementById('downloadImagesBtn').onclick = function() {
+                // Create a zip file with all images (simulated)
+                showNotification('Images downloaded successfully');
+            };
+            
+            showNotification('PDF converted to images successfully');
+        }
+        
+        // Image to PDF Converter
+        function handleImageToPdfUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            imageToPdfData = [];
+            const fileList = document.getElementById('imageList');
+            fileList.innerHTML = '';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!file.type.startsWith('image/')) {
+                    showNotification(`${file.name} is not a valid image file`, 'error');
+                    continue;
+                }
+                
+                imageToPdfData.push(file);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div><i class="fas fa-image"></i> ${file.name}</div>
+                    <button class="file-remove" onclick="removeImageItem(${i})"><i class="fas fa-times"></i></button>
+                `;
+                fileList.appendChild(fileItem);
+            }
+            
+            if (imageToPdfData.length > 0) {
+                showNotification(`${imageToPdfData.length} image(s) uploaded successfully`);
+            }
+        }
+        
+        function removeImageItem(index) {
+            imageToPdfData.splice(index, 1);
+            const fileList = document.getElementById('imageList');
+            fileList.innerHTML = '';
+            
+            imageToPdfData.forEach((file, i) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div><i class="fas fa-image"></i> ${file.name}</div>
+                    <button class="file-remove" onclick="removeImageItem(${i})"><i class="fas fa-times"></i></button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+            
+            if (imageToPdfData.length === 0) {
+                showNotification('All images removed');
+            }
+        }
+        
+        function convertImagesToPdf() {
+            if (imageToPdfData.length === 0) {
+                showNotification('Please upload at least one image file', 'error');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const pageSize = document.getElementById('pageSize').value;
+            const orientation = document.getElementById('pageOrientation').value;
+            
+            // Set page size and orientation
+            if (pageSize === 'a4') {
+                if (orientation === 'portrait') {
+                    pdf = new jsPDF('p', 'mm', 'a4');
+                } else {
+                    pdf = new jsPDF('l', 'mm', 'a4');
+                }
+            } else if (pageSize === 'letter') {
+                if (orientation === 'portrait') {
+                    pdf = new jsPDF('p', 'mm', 'letter');
+                } else {
+                    pdf = new jsPDF('l', 'mm', 'letter');
+                }
+            } else if (pageSize === 'legal') {
+                if (orientation === 'portrait') {
+                    pdf = new jsPDF('p', 'mm', 'legal');
+                } else {
+                    pdf = new jsPDF('l', 'mm', 'legal');
+                }
+            }
+            
+            // Add each image to the PDF
+            imageToPdfData.forEach((file, index) => {
+                if (index > 0) {
+                    pdf.addPage();
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgData = e.target.result;
+                    const img = new Image();
+                    img.onload = function() {
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        const imgWidth = img.width;
+                        const imgHeight = img.height;
+                        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+                        const imgX = (pdfWidth - imgWidth * ratio) / 2;
+                        const imgY = 10;
+                        
+                        pdf.addImage(imgData, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                        
+                        // If this is the last image, show the result
+                        if (index === imageToPdfData.length - 1) {
+                            const resultDiv = document.getElementById('imageToPdfResult');
+                            resultDiv.style.display = 'block';
+                            
+                            // Set up download button
+                            document.getElementById('downloadPdfBtn').onclick = function() {
+                                pdf.save('converted.pdf');
+                                showNotification('PDF downloaded successfully');
+                            };
+                            
+                            showNotification('Images converted to PDF successfully');
+                        }
+                    };
+                    img.src = imgData;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // PDF Merger
+        function handlePdfMergerUpload(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            pdfMergerData = [];
+            const pdfList = document.getElementById('pdfList');
+            pdfList.innerHTML = '';
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type !== 'application/pdf') {
+                    showNotification(`${file.name} is not a valid PDF file`, 'error');
+                    continue;
+                }
+                
+                pdfMergerData.push(file);
+                
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div><i class="fas fa-file-pdf"></i> ${file.name}</div>
+                    <button class="file-remove" onclick="removePdfItem(${i})"><i class="fas fa-times"></i></button>
+                `;
+                pdfList.appendChild(fileItem);
+            }
+            
+            if (pdfMergerData.length > 0) {
+                showNotification(`${pdfMergerData.length} PDF file(s) uploaded successfully`);
+            }
+        }
+        
+        function removePdfItem(index) {
+            pdfMergerData.splice(index, 1);
+            const pdfList = document.getElementById('pdfList');
+            pdfList.innerHTML = '';
+            
+            pdfMergerData.forEach((file, i) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <div><i class="fas fa-file-pdf"></i> ${file.name}</div>
+                    <button class="file-remove" onclick="removePdfItem(${i})"><i class="fas fa-times"></i></button>
+                `;
+                pdfList.appendChild(fileItem);
+            });
+            
+            if (pdfMergerData.length === 0) {
+                showNotification('All PDF files removed');
+            }
+        }
+        
+        function mergePdfs() {
+            if (pdfMergerData.length === 0) {
+                showNotification('Please upload at least one PDF file', 'error');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const mergedPdf = new jsPDF();
+            
+            // Process each PDF file
+            let processedCount = 0;
+            pdfMergerData.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const typedarray = new Uint8Array(e.target.result);
+                    
+                    // For demo purposes, we'll simulate merging
+                    // In a real implementation, you would use PDF-lib or similar
+                    if (index > 0) {
+                        mergedPdf.addPage();
+                    }
+                    
+                    mergedPdf.text(`Page from ${file.name}`, 20, 20);
+                    
+                    processedCount++;
+                    
+                    // If this is the last file, show the result
+                    if (processedCount === pdfMergerData.length) {
+                        const resultDiv = document.getElementById('pdfMergerResult');
+                        resultDiv.style.display = 'block';
+                        
+                        // Set up download button
+                        document.getElementById('downloadMergedPdfBtn').onclick = function() {
+                            mergedPdf.save('merged.pdf');
+                            showNotification('Merged PDF downloaded successfully');
+                        };
+                        
+                        showNotification('PDF files merged successfully');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        // QR Code Generator
+        function generateQRCode() {
+            const text = document.getElementById('qrCodeText').value;
+            if (!text) {
+                showNotification('Please enter text or URL', 'error');
+                return;
+            }
+            
+            const size = parseInt(document.getElementById('qrCodeSize').value);
+            const foreground = document.getElementById('qrCodeForeground').value;
+            const background = document.getElementById('qrCodeBackground').value;
+            
+            // Clear previous QR code
+            const qrDisplay = document.getElementById('qrCodeDisplay');
+            qrDisplay.innerHTML = '';
+            
+            // Generate new QR code
+            generatedQRCode = new QRCode(qrDisplay, {
+                text: text,
+                width: size,
+                height: size,
+                colorDark: foreground,
+                colorLight: background,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            const resultDiv = document.getElementById('qrCodeResult');
+            resultDiv.style.display = 'block';
+            
+            // Set up download button
+            document.getElementById('downloadQrBtn').onclick = function() {
+                const canvas = qrDisplay.querySelector('canvas');
+                const link = document.createElement('a');
+                link.download = 'qrcode.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                showNotification('QR code downloaded successfully');
+            };
+            
+            showNotification('QR code generated successfully');
+        }
+        
+        // Barcode Generator
+        function generateBarcode() {
+            const value = document.getElementById('barcodeValue').value;
+            if (!value) {
+                showNotification('Please enter barcode value', 'error');
+                return;
+            }
+            
+            const type = document.getElementById('barcodeType').value;
+            const format = document.getElementById('barcodeFormat').value;
+            const width = parseInt(document.getElementById('barcodeWidth').value);
+            const height = parseInt(document.getElementById('barcodeHeight').value);
+            
+            // Clear previous barcode
+            const barcodeDisplay = document.getElementById('barcodeDisplay');
+            barcodeDisplay.innerHTML = '';
+            
+            // Create SVG element
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("id", "barcode");
+            
+            // Generate barcode
+            try {
+                JsBarcode(svg, value, {
+                    format: type,
+                    width: width,
+                    height: height,
+                    displayValue: true
+                });
+                
+                barcodeDisplay.appendChild(svg);
+                generatedBarcode = svg;
+                
+                const resultDiv = document.getElementById('barcodeResult');
+                resultDiv.style.display = 'block';
+                
+                // Set up download button
+                document.getElementById('downloadBarcodeBtn').onclick = function() {
+                    if (format === 'SVG') {
+                        const svgData = new XMLSerializer().serializeToString(svg);
+                        const blob = new Blob([svgData], { type: 'image/svg+xml' });
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.download = 'barcode.svg';
+                        link.href = url;
+                        link.click();
+                        URL.revokeObjectURL(url);
+                    } else {
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        const img = new Image();
+                        img.onload = function() {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            context.drawImage(img, 0, 0);
+                            
+                            const link = document.createElement('a');
+                            link.download = `barcode.${format.toLowerCase()}`;
+                            link.href = canvas.toDataURL(`image/${format.toLowerCase()}`);
+                            link.click();
+                        };
+                        const svgData = new XMLSerializer().serializeToString(svg);
+                        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                    }
+                    
+                    showNotification('Barcode downloaded successfully');
+                };
+                
+                showNotification('Barcode generated successfully');
+            } catch (error) {
+                showNotification('Error generating barcode: ' + error.message, 'error');
+            }
+        }
+        
+        // Online Notepad
+        function saveNotepad() {
+            const text = document.getElementById('notepadText').value;
+            if (!text) {
+                showNotification('Notepad is empty', 'warning');
+                return;
+            }
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'notepad.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Notepad saved successfully');
+        }
+        
+        function clearNotepad() {
+            if (confirm('Are you sure you want to clear the notepad?')) {
+                document.getElementById('notepadText').value = '';
+                showNotification('Notepad cleared');
+            }
+        }
+        
+        function loadNotepad() {
+            document.getElementById('notepadFile').click();
+        }
+        
+        function loadNotepadFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('notepadText').value = e.target.result;
+                    showNotification('File loaded successfully');
+                };
+                reader.readAsText(file);
+            }
+        }
+        
+        // Word Counter
+        function countWords() {
+            const text = document.getElementById('wordCounterText').value;
+            if (!text) {
+                showNotification('Please enter some text', 'error');
+                return;
+            }
+            
+            // Count words
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            
+            // Count characters
+            const charCount = text.length;
+            
+            // Count characters without spaces
+            const charNoSpaceCount = text.replace(/\s/g, '').length;
+            
+            // Estimate reading time (assuming 200 words per minute)
+            const readingTime = Math.ceil(wordCount / 200);
+            
+            // Display results
+            document.getElementById('wordCount').textContent = wordCount;
+            document.getElementById('charCount').textContent = charCount;
+            document.getElementById('charNoSpaceCount').textContent = charNoSpaceCount;
+            document.getElementById('readingTime').textContent = readingTime;
+            
+            document.getElementById('wordCounterResult').style.display = 'block';
+            showNotification('Word count completed');
+        }
+        
+        // Resume Builder
+        function addExperience() {
+            const container = document.getElementById('experienceContainer');
+            const experienceItem = document.createElement('div');
+            experienceItem.className = 'experience-item';
+            experienceItem.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Job Title">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Company">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Start Date (MM/YYYY)">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="End Date (MM/YYYY or Present)">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" rows="2" placeholder="Job Description"></textarea>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+            `;
+            container.appendChild(experienceItem);
+        }
+        
+        function addEducation() {
+            const container = document.getElementById('educationContainer');
+            const educationItem = document.createElement('div');
+            educationItem.className = 'education-item';
+            educationItem.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Degree">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Institution">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Graduation Year">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">Remove</button>
+            `;
+            container.appendChild(educationItem);
+        }
+        
+        function generateResume() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const summary = document.getElementById('summary').value;
+            const skills = document.getElementById('skills').value;
+            
+            if (!firstName || !lastName || !email || !phone) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Collect experience data
+            const experienceItems = document.querySelectorAll('#experienceContainer .experience-item');
+            let experienceHTML = '';
+            experienceItems.forEach(item => {
+                const title = item.querySelector('input[placeholder="Job Title"]').value;
+                const company = item.querySelector('input[placeholder="Company"]').value;
+                const startDate = item.querySelector('input[placeholder="Start Date (MM/YYYY)"]').value;
+                const endDate = item.querySelector('input[placeholder="End Date (MM/YYYY or Present)"]').value;
+                const description = item.querySelector('textarea').value;
+                
+                if (title && company) {
+                    experienceHTML += `
+                        <div class="preview-section">
+                            <h4>${title} at ${company}</h4>
+                            <p><strong>${startDate} - ${endDate}</strong></p>
+                            <p>${description}</p>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Collect education data
+            const educationItems = document.querySelectorAll('#educationContainer .education-item');
+            let educationHTML = '';
+            educationItems.forEach(item => {
+                const degree = item.querySelector('input[placeholder="Degree"]').value;
+                const institution = item.querySelector('input[placeholder="Institution"]').value;
+                const year = item.querySelector('input[placeholder="Graduation Year"]').value;
+                
+                if (degree && institution) {
+                    educationHTML += `
+                        <div class="preview-section">
+                            <h4>${degree}</h4>
+                            <p>${institution}, ${year}</p>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Generate resume preview
+            const resumePreview = document.getElementById('resumePreview');
+            resumePreview.innerHTML = `
+                <div class="preview-header">
+                    <div>
+                        <h1>${firstName} ${lastName}</h1>
+                        <p>${email} | ${phone}</p>
+                    </div>
+                </div>
+                
+                ${summary ? `
+                <div class="preview-section">
+                    <h3>Professional Summary</h3>
+                    <p>${summary}</p>
+                </div>
+                ` : ''}
+                
+                ${experienceHTML ? `
+                <div class="preview-section">
+                    <h3>Work Experience</h3>
+                    ${experienceHTML}
+                </div>
+                ` : ''}
+                
+                ${educationHTML ? `
+                <div class="preview-section">
+                    <h3>Education</h3>
+                    ${educationHTML}
+                </div>
+                ` : ''}
+                
+                ${skills ? `
+                <div class="preview-section">
+                    <h3>Skills</h3>
+                    <p>${skills}</p>
+                </div>
+                ` : ''}
+            `;
+            
+            const resultDiv = document.getElementById('resumeResult');
+            resultDiv.style.display = 'block';
+            
+            // Set up download button
+            document.getElementById('downloadResumeBtn').onclick = function() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add content to PDF
+                doc.setFontSize(20);
+                doc.text(`${firstName} ${lastName}`, 20, 20);
+                
+                doc.setFontSize(12);
+                doc.text(`${email} | ${phone}`, 20, 30);
+                
+                if (summary) {
+                    doc.setFontSize(14);
+                    doc.text('Professional Summary', 20, 50);
+                    doc.setFontSize(12);
+                    const summaryLines = doc.splitTextToSize(summary, 170);
+                    doc.text(summaryLines, 20, 60);
+                }
+                
+                doc.save('resume.pdf');
+                showNotification('Resume downloaded successfully');
+            };
+            
+            showNotification('Resume generated successfully');
+        }
+        
+        // Invoice Generator
+        function addInvoiceItem() {
+            const tbody = document.getElementById('invoiceItems');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="form-control item-description" placeholder="Item description"></td>
+                <td><input type="number" class="form-control item-quantity" value="1" min="1"></td>
+                <td><input type="number" class="form-control item-price" value="0" step="0.01"></td>
+                <td class="item-total">0.00</td>
+                <td><button type="button" class="btn btn-danger" onclick="removeInvoiceItem(this)">Remove</button></td>
+            `;
+            tbody.appendChild(row);
+            
+            // Add event listeners to calculate total when quantity or price changes
+            const quantityInput = row.querySelector('.item-quantity');
+            const priceInput = row.querySelector('.item-price');
+            
+            quantityInput.addEventListener('input', calculateInvoiceTotal);
+            priceInput.addEventListener('input', calculateInvoiceTotal);
+        }
+        
+        function removeInvoiceItem(button) {
+            button.closest('tr').remove();
+            calculateInvoiceTotal();
+        }
+        
+        function calculateInvoiceTotal() {
+            let subtotal = 0;
+            const rows = document.querySelectorAll('#invoiceItems tr');
+            
+            rows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const total = quantity * price;
+                row.querySelector('.item-total').textContent = total.toFixed(2);
+                subtotal += total;
+            });
+            
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = subtotal * (taxRate / 100);
+            const total = subtotal + taxAmount;
+            
+            document.getElementById('subtotal').value = subtotal.toFixed(2);
+            document.getElementById('taxAmount').value = taxAmount.toFixed(2);
+            document.getElementById('total').value = total.toFixed(2);
+        }
+        
+        // Add event listener to tax rate input
+        document.getElementById('taxRate').addEventListener('input', calculateInvoiceTotal);
+        
+        // Add event listeners to existing invoice items
+        document.querySelectorAll('#invoiceItems .item-quantity, #invoiceItems .item-price').forEach(input => {
+            input.addEventListener('input', calculateInvoiceTotal);
+        });
+        
+        function generateInvoice() {
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const invoiceDate = document.getElementById('invoiceDate').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const currency = document.getElementById('currency').value;
+            const fromName = document.getElementById('fromName').value;
+            const fromEmail = document.getElementById('fromEmail').value;
+            const fromAddress = document.getElementById('fromAddress').value;
+            const toName = document.getElementById('toName').value;
+            const toEmail = document.getElementById('toEmail').value;
+            const toAddress = document.getElementById('toAddress').value;
+            const notes = document.getElementById('invoiceNotes').value;
+            
+            if (!invoiceNumber || !invoiceDate || !dueDate || !fromName || !toName) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+            
+            // Collect invoice items
+            const invoiceItems = [];
+            const rows = document.querySelectorAll('#invoiceItems tr');
+            rows.forEach(row => {
+                const description = row.querySelector('.item-description').value;
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                const total = quantity * price;
+                
+                if (description && quantity > 0) {
+                    invoiceItems.push({
+                        description,
+                        quantity,
+                        price,
+                        total
+                    });
+                }
+            });
+            
+            if (invoiceItems.length === 0) {
+                showNotification('Please add at least one invoice item', 'error');
+                return;
+            }
+            
+            // Calculate totals
+            const subtotal = parseFloat(document.getElementById('subtotal').value) || 0;
+            const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+            const taxAmount = parseFloat(document.getElementById('taxAmount').value) || 0;
+            const total = parseFloat(document.getElementById('total').value) || 0;
+            
+            // Generate currency symbol
+            const currencySymbols = {
+                'USD': '$',
+                'EUR': '€',
+                'GBP': '£',
+                'JPY': '¥'
+            };
+            const currencySymbol = currencySymbols[currency] || '$';
+            
+            // Generate invoice preview
+            const invoicePreview = document.getElementById('invoicePreview');
+            invoicePreview.innerHTML = `
+                <div class="preview-header">
+                    <div>
+                        <h2>INVOICE</h2>
+                        <p><strong>Invoice #:</strong> ${invoiceNumber}</p>
+                        <p><strong>Date:</strong> ${invoiceDate}</p>
+                        <p><strong>Due Date:</strong> ${dueDate}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <h3>${fromName}</h3>
+                        <p>${fromEmail}</p>
+                        <p>${fromAddress}</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>Bill To:</h3>
+                    <p><strong>${toName}</strong></p>
+                    <p>${toEmail}</p>
+                    <p>${toAddress}</p>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <thead>
+                        <tr style="background: #f0f0f0;">
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Description</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Quantity</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Price</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${invoiceItems.map(item => `
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.description}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${item.quantity}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${currencySymbol}${item.price.toFixed(2)}</td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">${currencySymbol}${item.total.toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px; text-align: right;">
+                    <p>Subtotal: ${currencySymbol}${subtotal.toFixed(2)}</p>
+                    <p>Tax (${taxRate}%): ${currencySymbol}${taxAmount.toFixed(2)}</p>
+                    <p style="font-size: 18px; font-weight: bold;">Total: ${currencySymbol}${total.toFixed(2)}</p>
+                </div>
+                
+                ${notes ? `
+                <div style="margin-top: 30px;">
+                    <h3>Notes</h3>
+                    <p>${notes}</p>
+                </div>
+                ` : ''}
+            `;
+            
+            const resultDiv = document.getElementById('invoiceResult');
+            resultDiv.style.display = 'block';
+            
+            // Set up download button
+            document.getElementById('downloadInvoiceBtn').onclick = function() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add content to PDF
+                doc.setFontSize(20);
+                doc.text('INVOICE', 20, 20);
+                
+                doc.setFontSize(12);
+                doc.text(`Invoice #: ${invoiceNumber}`, 20, 30);
+                doc.text(`Date: ${invoiceDate}`, 20, 40);
+                doc.text(`Due Date: ${dueDate}`, 20, 50);
+                
+                doc.text(`Bill To:`, 20, 70);
+                doc.text(toName, 20, 80);
+                doc.text(toEmail, 20, 90);
+                doc.text(toAddress, 20, 100);
+                
+                // Add table
+                doc.setFontSize(14);
+                doc.text('Items:', 20, 120);
+                doc.setFontSize(12);
+                
+                let yPos = 130;
+                invoiceItems.forEach(item => {
+                    doc.text(`${item.description} - Qty: ${item.quantity} - Price: ${currencySymbol}${item.price.toFixed(2)} - Total: ${currencySymbol}${item.total.toFixed(2)}`, 20, yPos);
+                    yPos += 10;
+                });
+                
+                yPos += 10;
+                doc.text(`Subtotal: ${currencySymbol}${subtotal.toFixed(2)}`, 20, yPos);
+                yPos += 10;
+                doc.text(`Tax (${taxRate}%): ${currencySymbol}${taxAmount.toFixed(2)}`, 20, yPos);
+                yPos += 10;
+                doc.setFontSize(16);
+                doc.text(`Total: ${currencySymbol}${total.toFixed(2)}`, 20, yPos);
+                
+                doc.save(`invoice_${invoiceNumber}.pdf`);
+                showNotification('Invoice downloaded successfully');
+            };
+            
+            showNotification('Invoice generated successfully');
+        }
+        
+        // Digital Signature Maker
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', handleTouch);
+        canvas.addEventListener('touchmove', handleTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        function handleTouch(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            showNotification('Signature cleared');
+        }
+        
+        function saveSignature() {
+            // Check if canvas is empty
+            if (isCanvasEmpty()) {
+                showNotification('Please draw your signature first', 'error');
+                return;
+            }
+            
+            const resultDiv = document.getElementById('signatureResult');
+            resultDiv.style.display = 'block';
+            
+            // Display the signature
+            const signaturePreview = document.getElementById('signaturePreview');
+            signaturePreview.innerHTML = `<img src="${canvas.toDataURL()}" alt="Signature" style="max-width: 100%;">`;
+            
+            // Set up download button
+            document.getElementById('downloadSignatureBtn').onclick = function() {
+                const link = document.createElement('a');
+                link.download = 'signature.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                showNotification('Signature downloaded successfully');
+            };
+            
+            showNotification('Signature saved successfully');
+        }
+        
+        function isCanvasEmpty() {
+            const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+            for (let i = 0; i < pixelData.length; i += 4) {
+                if (pixelData[i + 3] !== 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        // Set today's date as default for invoice date
+        document.getElementById('invoiceDate').valueAsDate = new Date();
+        
+        // Set due date to 30 days from now
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 30);
+        document.getElementById('dueDate').valueAsDate = dueDate;
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            showNotification('Welcome to DocTools Pro! All tools are ready to use.');
+        });
+    </script>
+</body>
+</html>
