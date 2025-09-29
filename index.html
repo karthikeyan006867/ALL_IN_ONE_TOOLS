@@ -640,6 +640,93 @@
             color: var(--gray);
         }
         
+        .section {
+            padding: 60px 0;
+        }
+        
+        .section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--primary);
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .about-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .about-image {
+            text-align: center;
+        }
+        
+        .about-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .contact-info {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .contact-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .contact-info p {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .contact-info i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .team-member {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .team-member img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+            object-fit: cover;
+        }
+        
+        .team-member-info h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        
+        .team-member-info p {
+            color: var(--gray);
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -667,6 +754,10 @@
                 width: 95%;
                 margin: 20px;
             }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -690,7 +781,7 @@
         </div>
     </header>
 
-    <section class="hero">
+    <section id="home" class="hero">
         <div class="container">
             <h1>All-in-One Document & File Utilities</h1>
             <p>Convert, merge, generate, and manage your documents with our easy-to-use online tools. No installation required.</p>
@@ -823,6 +914,66 @@
         </div>
     </section>
 
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2>About DocTools Pro</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>DocTools Pro is your all-in-one solution for document and file utilities. We provide a comprehensive suite of tools designed to make document management simple, efficient, and accessible to everyone.</p>
+                    <p>Our platform offers everything from PDF conversion and merging to QR code generation and digital signatures. All tools are web-based, requiring no installation, and work directly in your browser.</p>
+                    <p>Founded by Karthikeyan G, our mission is to empower individuals and businesses with the tools they need to handle documents effectively, saving time and increasing productivity.</p>
+                    
+                    <div class="team-member">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Karthikeyan G">
+                        <div class="team-member-info">
+                            <h4>Karthikeyan G</h4>
+                            <p>Founder & Developer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Document Management">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <div class="contact-info">
+                <h3>Get in Touch</h3>
+                <p><i class="fas fa-envelope"></i> Email: admin@karthikeyang.tech</p>
+                <p><i class="fas fa-phone"></i> Phone: +1 (555) 123-4567</p>
+                <p><i class="fas fa-map-marker-alt"></i> Address: 123 Tech Street, Digital City</p>
+            </div>
+            
+            <div class="contact-form">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" class="form-control" id="subject" placeholder="Subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea class="form-control" id="message" rows="5" placeholder="Your Message" required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
@@ -929,6 +1080,15 @@
                             <option value="landscape">Landscape</option>
                         </select>
                     </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Image Position</label>
+                    <select class="form-control" id="imagePosition">
+                        <option value="fit">Fit to Page</option>
+                        <option value="center">Center on Page</option>
+                        <option value="stretch">Stretch to Fill</option>
+                    </select>
                 </div>
                 
                 <button class="btn" onclick="convertImagesToPdf()">Convert to PDF</button>
@@ -1445,6 +1605,7 @@
                 <div class="footer-column">
                     <h3>DocTools Pro</h3>
                     <p>Your all-in-one solution for document and file utilities. Convert, merge, generate, and manage your files with ease.</p>
+                    <p>Developed by Karthikeyan G</p>
                 </div>
                 <div class="footer-column">
                     <h3>Tools</h3>
@@ -1468,14 +1629,14 @@
                 <div class="footer-column">
                     <h3>Contact</h3>
                     <ul>
-                        <li><i class="fas fa-envelope"></i> contact@doctools.com</li>
+                        <li><i class="fas fa-envelope"></i> admin@karthikeyang.tech</li>
                         <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
                         <li><i class="fas fa-map-marker-alt"></i> 123 Main St, Anytown, USA</li>
                     </ul>
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2023 DocTools Pro. All rights reserved.</p>
+                <p>&copy; 2023 DocTools Pro. All rights reserved. Developed by Karthikeyan G.</p>
             </div>
         </div>
     </footer>
@@ -1768,9 +1929,9 @@
             }
             
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
             const pageSize = document.getElementById('pageSize').value;
             const orientation = document.getElementById('pageOrientation').value;
+            const imagePosition = document.getElementById('imagePosition').value;
             
             // Show progress
             const progressContainer = document.getElementById('imageToPdfProgress');
@@ -1780,6 +1941,7 @@
             progressFill.style.width = '0%';
             
             // Set page size and orientation
+            let pdf;
             if (pageSize === 'a4') {
                 if (orientation === 'portrait') {
                     pdf = new jsPDF('p', 'mm', 'a4');
@@ -1813,11 +1975,31 @@
                     const pdfHeight = pdf.internal.pageSize.getHeight();
                     const imgWidth = image.width;
                     const imgHeight = image.height;
-                    const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.9;
-                    const imgX = (pdfWidth - imgWidth * ratio) / 2;
-                    const imgY = (pdfHeight - imgHeight * ratio) / 2;
                     
-                    pdf.addImage(img.data, 'JPEG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+                    let imgX, imgY, imgFinalWidth, imgFinalHeight;
+                    
+                    if (imagePosition === 'fit') {
+                        // Fit to page while maintaining aspect ratio
+                        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight) * 0.9;
+                        imgFinalWidth = imgWidth * ratio;
+                        imgFinalHeight = imgHeight * ratio;
+                        imgX = (pdfWidth - imgFinalWidth) / 2;
+                        imgY = (pdfHeight - imgFinalHeight) / 2;
+                    } else if (imagePosition === 'center') {
+                        // Center image at original size
+                        imgFinalWidth = Math.min(imgWidth, pdfWidth * 0.8);
+                        imgFinalHeight = Math.min(imgHeight, pdfHeight * 0.8);
+                        imgX = (pdfWidth - imgFinalWidth) / 2;
+                        imgY = (pdfHeight - imgFinalHeight) / 2;
+                    } else if (imagePosition === 'stretch') {
+                        // Stretch to fill page
+                        imgFinalWidth = pdfWidth * 0.9;
+                        imgFinalHeight = pdfHeight * 0.9;
+                        imgX = (pdfWidth - imgFinalWidth) / 2;
+                        imgY = (pdfHeight - imgFinalHeight) / 2;
+                    }
+                    
+                    pdf.addImage(img.data, 'JPEG', imgX, imgY, imgFinalWidth, imgFinalHeight);
                     
                     processedImages++;
                     const progress = (processedImages / imageToPdfData.length) * 100;
@@ -2758,6 +2940,23 @@
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 30);
         document.getElementById('dueDate').valueAsDate = dueDate;
+        
+        // Handle contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            if (name && email && subject && message) {
+                showNotification('Your message has been sent successfully!');
+                this.reset();
+            } else {
+                showNotification('Please fill in all fields', 'error');
+            }
+        });
         
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
