@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/JsBarcode/3.11.5/JsBarcode.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -179,6 +180,15 @@
             background: #5a6268;
         }
         
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+        
         .modal {
             display: none;
             position: fixed;
@@ -333,6 +343,9 @@
             display: block;
             cursor: crosshair;
             background: white;
+            width: 100%;
+            max-width: 700px;
+            touch-action: none;
         }
         
         .canvas-controls {
@@ -771,10 +784,10 @@
                 </div>
                 <nav>
                     <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#tools">Tools</a></li>
-                        <li><a href="#about">About</a></li>
-                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#home" onclick="scrollToSection('home')">Home</a></li>
+                        <li><a href="#tools" onclick="scrollToSection('tools')">Tools</a></li>
+                        <li><a href="#about" onclick="scrollToSection('about')">About</a></li>
+                        <li><a href="#contact" onclick="scrollToSection('contact')">Contact</a></li>
                     </ul>
                 </nav>
             </div>
@@ -785,7 +798,7 @@
         <div class="container">
             <h1>All-in-One Document & File Utilities</h1>
             <p>Convert, merge, generate, and manage your documents with our easy-to-use online tools. No installation required.</p>
-            <a href="#tools" class="btn">Explore Tools</a>
+            <a href="#tools" class="btn" onclick="scrollToSection('tools')">Explore Tools</a>
         </div>
     </section>
 
@@ -800,7 +813,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Convert PDF pages to high-quality images (JPG, PNG).</p>
-                    <a href="#" class="btn">Convert Now</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('pdfToImageModal')">Convert Now</a>
                 </div>
             </div>
 
@@ -812,7 +825,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Combine multiple images into a single PDF document.</p>
-                    <a href="#" class="btn">Convert Now</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('imageToPdfModal')">Convert Now</a>
                 </div>
             </div>
 
@@ -824,7 +837,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Combine multiple PDF files into one document.</p>
-                    <a href="#" class="btn">Merge PDFs</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('pdfMergerModal')">Merge PDFs</a>
                 </div>
             </div>
 
@@ -836,7 +849,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Create custom QR codes for URLs, text, or contact info.</p>
-                    <a href="#" class="btn">Generate QR</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('qrCodeModal')">Generate QR</a>
                 </div>
             </div>
 
@@ -848,7 +861,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Generate various types of barcodes for products and inventory.</p>
-                    <a href="#" class="btn">Generate</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('barcodeModal')">Generate</a>
                 </div>
             </div>
 
@@ -860,7 +873,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Write and save notes as TXT files directly in your browser.</p>
-                    <a href="#" class="btn">Open Notepad</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('notepadModal')">Open Notepad</a>
                 </div>
             </div>
 
@@ -872,7 +885,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Count words, characters, and estimate reading time for your text.</p>
-                    <a href="#" class="btn">Count Words</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('wordCounterModal')">Count Words</a>
                 </div>
             </div>
 
@@ -884,7 +897,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Create professional resumes with our easy-to-use builder.</p>
-                    <a href="#" class="btn">Build Resume</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('resumeBuilderModal')">Build Resume</a>
                 </div>
             </div>
 
@@ -896,7 +909,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Create professional invoices and download as PDF.</p>
-                    <a href="#" class="btn">Create Invoice</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('invoiceGeneratorModal')">Create Invoice</a>
                 </div>
             </div>
 
@@ -908,7 +921,7 @@
                 </div>
                 <div class="tool-body">
                     <p>Create and save your digital signature for documents.</p>
-                    <a href="#" class="btn">Create Signature</a>
+                    <a href="#" class="btn" onclick="event.stopPropagation(); openModal('signatureModal')">Create Signature</a>
                 </div>
             </div>
         </div>
@@ -946,8 +959,6 @@
             <div class="contact-info">
                 <h3>Get in Touch</h3>
                 <p><i class="fas fa-envelope"></i> Email: admin@karthikeyang.tech</p>
-                <p><i class="fas fa-phone"></i> Phone: +1 (555) 123-4567</p>
-                <p><i class="fas fa-map-marker-alt"></i> Address: 123 Tech Street, Digital City</p>
             </div>
             
             <div class="contact-form">
@@ -1103,7 +1114,7 @@
                 <div id="imageToPdfResult" class="result-container" style="display: none;">
                     <h3>PDF Generated</h3>
                     <div id="pdfPreviewContainer" class="pdf-preview">
-                        <iframe id="generatedPdfPreview"></iframe>
+                        <div id="generatedPdfPreview"></div>
                     </div>
                     <button class="btn" id="downloadPdfBtn" style="margin-top: 15px;">Download PDF</button>
                 </div>
@@ -1148,7 +1159,7 @@
                 <div id="pdfMergerResult" class="result-container" style="display: none;">
                     <h3>Merged PDF</h3>
                     <div id="mergedPdfPreview" class="pdf-preview">
-                        <iframe id="mergedPdfIframe"></iframe>
+                        <div id="mergedPdfIframe"></div>
                     </div>
                     <button class="btn" id="downloadMergedPdfBtn" style="margin-top: 15px;">Download Merged PDF</button>
                 </div>
@@ -1361,7 +1372,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Email Address">
+                            <input type="email" class="form-control" id="resumeEmail" placeholder="Email Address">
                         </div>
                         <div class="form-group">
                             <label>Phone</label>
@@ -1487,9 +1498,6 @@
                                 <input type="text" class="form-control" id="fromEmail" placeholder="Email">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="fromAddress" placeholder="Address">
-                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1501,9 +1509,6 @@
                             <div class="form-group">
                                 <input type="text" class="form-control" id="toEmail" placeholder="Email">
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="toAddress" placeholder="Address">
                         </div>
                     </div>
                     
@@ -1630,8 +1635,6 @@
                     <h3>Contact</h3>
                     <ul>
                         <li><i class="fas fa-envelope"></i> admin@karthikeyang.tech</li>
-                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
-                        <li><i class="fas fa-map-marker-alt"></i> 123 Main St, Anytown, USA</li>
                     </ul>
                 </div>
             </div>
@@ -1642,8 +1645,22 @@
     </footer>
 
     <script>
-        // Set PDF.js worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // Wait for all libraries to load
+        window.addEventListener('load', function() {
+            // Set PDF.js worker
+            if (typeof pdfjsLib !== 'undefined') {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+            
+            // Initialize the page
+            showNotification('Welcome to DocTools Pro! All tools are ready to use.');
+            
+            // Set default dates
+            setDefaultDates();
+            
+            // Initialize event listeners
+            initializeEventListeners();
+        });
         
         // Global variables
         let pdfToImageData = null;
@@ -1671,20 +1688,87 @@
             }, 3000);
         }
         
+        // Navigation function
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
         // Modal functions
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
         }
         
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
         }
         
         // Close modal when clicking outside of it
-        window.onclick = function(event) {
+        window.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
+                closeModal(event.target.id);
             }
+        });
+        
+        // Set default dates
+        function setDefaultDates() {
+            const today = new Date();
+            const invoiceDate = document.getElementById('invoiceDate');
+            const dueDate = document.getElementById('dueDate');
+            
+            if (invoiceDate) {
+                invoiceDate.valueAsDate = today;
+            }
+            
+            if (dueDate) {
+                const due = new Date();
+                due.setDate(due.getDate() + 30);
+                dueDate.valueAsDate = due;
+            }
+        }
+        
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Contact form
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+                    
+                    if (name && email && subject && message) {
+                        showNotification('Your message has been sent successfully!');
+                        this.reset();
+                    } else {
+                        showNotification('Please fill in all fields', 'error');
+                    }
+                });
+            }
+            
+            // Invoice items
+            const taxRateInput = document.getElementById('taxRate');
+            if (taxRateInput) {
+                taxRateInput.addEventListener('input', calculateInvoiceTotal);
+            }
+            
+            // Add event listeners to existing invoice items
+            document.querySelectorAll('#invoiceItems .item-quantity, #invoiceItems .item-price').forEach(input => {
+                input.addEventListener('input', calculateInvoiceTotal);
+            });
         }
         
         // PDF to Image Converter
@@ -1737,6 +1821,8 @@
                             showNotification('PDF file uploaded successfully');
                         });
                     });
+                }).catch(function(error) {
+                    showNotification('Error loading PDF: ' + error.message, 'error');
                 });
             };
             fileReader.readAsArrayBuffer(file);
@@ -1833,6 +1919,9 @@
                             });
                         });
                     }
+                }).catch(function(error) {
+                    progressContainer.style.display = 'none';
+                    showNotification('Error converting PDF: ' + error.message, 'error');
                 });
             };
             fileReader.readAsArrayBuffer(pdfToImageData);
@@ -1841,15 +1930,46 @@
         function downloadConvertedImages() {
             if (convertedImages.length === 0) return;
             
-            // Create a zip file (simplified - in real implementation use JSZip)
+            // Check if JSZip is available
+            if (typeof JSZip === 'undefined') {
+                showNotification('JSZip library not loaded. Downloading images individually.', 'warning');
+                // Download images individually
+                convertedImages.forEach((img, index) => {
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.download = `page_${img.page}.${img.format}`;
+                        link.href = img.data;
+                        link.click();
+                    }, index * 200); // Stagger downloads
+                });
+                showNotification('Images downloaded successfully');
+                return;
+            }
+            
+            // Create a zip file using JSZip
+            const zip = new JSZip();
+            
+            // Add each image to the zip
             convertedImages.forEach((img, index) => {
-                const link = document.createElement('a');
-                link.download = `page_${img.page}.${img.format}`;
-                link.href = img.data;
-                link.click();
+                // Extract base64 data
+                const base64Data = img.data.split(',')[1];
+                zip.file(`page_${img.page}.${img.format}`, base64Data, {base64: true});
             });
             
-            showNotification('Images downloaded successfully');
+            // Generate the zip file
+            zip.generateAsync({type: "blob"}).then(function(content) {
+                // Create a download link
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = "converted_images.zip";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Images downloaded successfully');
+            }).catch(function(error) {
+                showNotification('Error creating zip file: ' + error.message, 'error');
+            });
         }
         
         // Image to PDF Converter
@@ -2019,9 +2139,9 @@
                         const resultDiv = document.getElementById('imageToPdfResult');
                         resultDiv.style.display = 'block';
                         
-                        // Show PDF preview
-                        const iframe = document.getElementById('generatedPdfPreview');
-                        iframe.src = pdfUrl;
+                        // Show PDF preview using object tag instead of iframe
+                        const previewContainer = document.getElementById('generatedPdfPreview');
+                        previewContainer.innerHTML = `<object data="${pdfUrl}" type="application/pdf" width="100%" height="100%"></object>`;
                         
                         // Set up download button
                         document.getElementById('downloadPdfBtn').onclick = function() {
@@ -2180,9 +2300,9 @@
                                             const resultDiv = document.getElementById('pdfMergerResult');
                                             resultDiv.style.display = 'block';
                                             
-                                            // Show PDF preview
-                                            const iframe = document.getElementById('mergedPdfIframe');
-                                            iframe.src = pdfUrl;
+                                            // Show PDF preview using object tag
+                                            const previewContainer = document.getElementById('mergedPdfIframe');
+                                            previewContainer.innerHTML = `<object data="${pdfUrl}" type="application/pdf" width="100%" height="100%"></object>`;
                                             
                                             // Set up download button
                                             document.getElementById('downloadMergedPdfBtn').onclick = function() {
@@ -2196,6 +2316,9 @@
                                 });
                             });
                         }
+                    }).catch(function(error) {
+                        progressContainer.style.display = 'none';
+                        showNotification('Error merging PDF: ' + error.message, 'error');
                     });
                 };
                 reader.readAsArrayBuffer(pdfItem.file);
@@ -2235,11 +2358,15 @@
             // Set up download button
             document.getElementById('downloadQrBtn').onclick = function() {
                 const canvas = qrDisplay.querySelector('canvas');
-                const link = document.createElement('a');
-                link.download = 'qrcode.png';
-                link.href = canvas.toDataURL();
-                link.click();
-                showNotification('QR code downloaded successfully');
+                if (canvas) {
+                    const link = document.createElement('a');
+                    link.download = 'qrcode.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    showNotification('QR code downloaded successfully');
+                } else {
+                    showNotification('Error downloading QR code', 'error');
+                }
             };
             
             showNotification('QR code generated successfully');
@@ -2451,7 +2578,7 @@
         function generateResume() {
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('resumeEmail').value;
             const phone = document.getElementById('phone').value;
             const summary = document.getElementById('summary').value;
             const skills = document.getElementById('skills').value;
@@ -2677,14 +2804,6 @@
             document.getElementById('total').value = total.toFixed(2);
         }
         
-        // Add event listener to tax rate input
-        document.getElementById('taxRate').addEventListener('input', calculateInvoiceTotal);
-        
-        // Add event listeners to existing invoice items
-        document.querySelectorAll('#invoiceItems .item-quantity, #invoiceItems .item-price').forEach(input => {
-            input.addEventListener('input', calculateInvoiceTotal);
-        });
-        
         function generateInvoice() {
             const invoiceNumber = document.getElementById('invoiceNumber').value;
             const invoiceDate = document.getElementById('invoiceDate').value;
@@ -2692,10 +2811,8 @@
             const currency = document.getElementById('currency').value;
             const fromName = document.getElementById('fromName').value;
             const fromEmail = document.getElementById('fromEmail').value;
-            const fromAddress = document.getElementById('fromAddress').value;
             const toName = document.getElementById('toName').value;
             const toEmail = document.getElementById('toEmail').value;
-            const toAddress = document.getElementById('toAddress').value;
             const notes = document.getElementById('invoiceNotes').value;
             
             if (!invoiceNumber || !invoiceDate || !dueDate || !fromName || !toName) {
@@ -2755,7 +2872,6 @@
                     <div style="text-align: right;">
                         <h3>${fromName}</h3>
                         <p>${fromEmail}</p>
-                        <p>${fromAddress}</p>
                     </div>
                 </div>
                 
@@ -2763,7 +2879,6 @@
                     <h3>Bill To:</h3>
                     <p><strong>${toName}</strong></p>
                     <p>${toEmail}</p>
-                    <p>${toAddress}</p>
                 </div>
                 
                 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
@@ -2821,7 +2936,6 @@
                 doc.text(`Bill To:`, 20, 70);
                 doc.text(toName, 20, 80);
                 doc.text(toEmail, 20, 90);
-                doc.text(toAddress, 20, 100);
                 
                 // Add table
                 doc.setFontSize(14);
@@ -2850,32 +2964,71 @@
         }
         
         // Digital Signature Maker
-        const canvas = document.getElementById('signatureCanvas');
-        const ctx = canvas.getContext('2d');
+        let canvas, ctx;
         let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
         
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-        
-        // Touch events for mobile
-        canvas.addEventListener('touchstart', handleTouch);
-        canvas.addEventListener('touchmove', handleTouch);
-        canvas.addEventListener('touchend', stopDrawing);
+        function initSignatureCanvas() {
+            canvas = document.getElementById('signatureCanvas');
+            if (!canvas) return;
+            
+            ctx = canvas.getContext('2d');
+            
+            // Set canvas size properly for high DPI displays
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            
+            ctx.scale(dpr, dpr);
+            
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            // Set drawing styles
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
         
         function startDrawing(e) {
             isDrawing = true;
             const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+            
             ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.moveTo(lastX, lastY);
         }
         
         function draw(e) {
             if (!isDrawing) return;
+            
             const rect = canvas.getBoundingClientRect();
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
             ctx.stroke();
+            
+            lastX = currentX;
+            lastY = currentY;
         }
         
         function stopDrawing() {
@@ -2893,8 +3046,10 @@
         }
         
         function clearSignature() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            showNotification('Signature cleared');
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                showNotification('Signature cleared');
+            }
         }
         
         function saveSignature() {
@@ -2924,6 +3079,8 @@
         }
         
         function isCanvasEmpty() {
+            if (!ctx || !canvas) return true;
+            
             const pixelData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             for (let i = 0; i < pixelData.length; i += 4) {
                 if (pixelData[i + 3] !== 0) {
@@ -2933,34 +3090,12 @@
             return true;
         }
         
-        // Set today's date as default for invoice date
-        document.getElementById('invoiceDate').valueAsDate = new Date();
-        
-        // Set due date to 30 days from now
-        const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 30);
-        document.getElementById('dueDate').valueAsDate = dueDate;
-        
-        // Handle contact form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            if (name && email && subject && message) {
-                showNotification('Your message has been sent successfully!');
-                this.reset();
-            } else {
-                showNotification('Please fill in all fields', 'error');
+        // Initialize signature canvas when modal is opened
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.tool-card') && e.target.closest('.tool-card').onclick && 
+                e.target.closest('.tool-card').onclick.toString().includes('signatureModal')) {
+                setTimeout(initSignatureCanvas, 100);
             }
-        });
-        
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            showNotification('Welcome to DocTools Pro! All tools are ready to use.');
         });
     </script>
 </body>
